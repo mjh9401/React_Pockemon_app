@@ -32,7 +32,7 @@ const PokeCard = ({url,name}) => {
         }
         return pokeData;
     }
-    console.log(pokemon);
+
     const bg = `bg-${pokemon?.type}`;
     const border = `border-${pokemon?.type}`;
     const text = `text-${pokemon?.type}`;
