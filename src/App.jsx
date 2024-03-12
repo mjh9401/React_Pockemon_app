@@ -1,6 +1,4 @@
 import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
 import './App.css'
 import axios from 'axios';
 import { useEffect } from 'react';
@@ -11,6 +9,7 @@ function App() {
   
   const url = 'https://pokeapi.co/api/v2/pokemon/?limit=10&offset=0';
 
+  //api, db데이터 가져올때 사용
   useEffect(() => {
     fetchPockeData();
   }, []);
