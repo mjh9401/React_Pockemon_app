@@ -3,6 +3,7 @@ import './App.css'
 import axios from 'axios';
 import { useEffect } from 'react';
 import PokeCard from './components/PokeCard';
+import { useDebounce } from './hooks/useDebounce';
 
 function App() {
   const [pockmons, setPockmons] = useState([]);
@@ -10,10 +11,17 @@ function App() {
   const [limit, setLimit] = useState(20);
   const [searchTerm, setSetsearchTerm] = useState("");
   
+  const debounceSearchTerm = useDebounce(searchTerm,500);
+
   //api, db데이터 가져올때 사용
   useEffect(() => {
     fetchPockeData(true);
   }, []);
+
+  useEffect(() => {
+    handleSearchInput(debounceSearchTerm);
+  }, [debounceSearchTerm])
+  
   
   const fetchPockeData = async (isFirstFetch) =>{
     try {
@@ -28,11 +36,11 @@ function App() {
     }
   } 
 
-  const handleSearchInput = async (e)=>{
-    setSetsearchTerm(e.target.value);
-    if(e.target.value.length > 0){
+  const handleSearchInput = async (searchTerm)=>{
+    
+    if(searchTerm.length > 0){
       try {
-        const response = await axios.get(`https://pokeapi.co/api/v2/pokemon/${e.target.value}`);
+        const response = await axios.get(`https://pokeapi.co/api/v2/pokemon/${searchTerm}`);
         const pokemonData ={
           url: `https://pokeapi.co/api/v2/pokemon/${response.data.id}`,
           name : searchTerm
@@ -57,7 +65,7 @@ function App() {
           >
             <input type="text"
               value={searchTerm} 
-              onChange={handleSearchInput}
+              onChange={(e)=>{setSetsearchTerm(e.target.value);}}
               className='text-xs w-[20.5rem] h-6 px-2 py-1 bg-[hsl(214,13%,47%)] rounded-lg text-gray-300 text-center'/>
             <button type='submit' 
               className='text-xs bg-slate-900 text-slate-300 w-[2.5rem] h-6 px-2 py-1 rounded-r-lg text-center absolute right-0 hover:bg-slate-700'>
