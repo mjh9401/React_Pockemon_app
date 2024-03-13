@@ -7,7 +7,7 @@ const Auto = ({allpokemons,setDisplayedPokemons}) => {
     const value = input.toLowerCase();
     return value ? allpokemons.filter((e)=> e.name.includes(value)) : [];
   }
-
+  
   const handleSubmit = (e) =>{
     e.preventDefault();
 
