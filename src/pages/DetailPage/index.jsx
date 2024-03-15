@@ -8,6 +8,7 @@ import { ArrowLeft } from '../../assets/ArrowLeft';
 import { Vector } from '../../assets/Vector';
 import { Balance } from '../../assets/Balance';
 import Type from '../../components/Type';
+import BaseStat from '../../components/BaseStat';
 
 const DetailPage = () => {
 
@@ -31,7 +32,7 @@ const DetailPage = () => {
       if(pokemonData){
         const{name, id, types, weight, height, stats, abilities} = pokemonData;
         const nextAndPreviousPokemon = await getNextAndPreviousPokemon(id);
-        console.log(stats);
+        
 
         // 자바스크립트 Promise 부분 찾아보기
         const DemageRelations = await Promise.all(
@@ -119,10 +120,7 @@ const DetailPage = () => {
   const img = `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/${pokemon?.id}.png`;
   const bg = `bg-${pokemon?.types?.[0]}`;
   const text = `text-${pokemon?.types?.[0]}`;
-  console.log('pokemon',pokemon);
-  console.log('pokemon',pokemon?.types?.[0]);
-
-
+  console.log(pokemon.stats);
 
   return (
     <article className='flex items-center gap-1 flex-col w-full'>
@@ -208,7 +206,18 @@ const DetailPage = () => {
           </h2>
 
           <div className='w-full'>
-              stat
+              <table>
+                <tbody>
+                  {pokemon.stats.map((stat)=>(
+                    <BaseStat
+                      key={stat.name}
+                      valueStat={stat.baseStat}
+                      nameStat={stat.name}
+                      type={pokemon.types[0]}
+                    />
+                  ))}
+                </tbody>
+              </table>
           </div>
 
           {pokemon.DemageRelations && (
