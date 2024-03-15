@@ -9,12 +9,53 @@ const DamageRelations = ({damages}) => {
         
         if(arrayDamage.length === 2){
             // 합치는 부분
+            const obj = joinDamageRelations(arrayDamage);
+            reduceDuplicateValues(postDamageValue(obj.from));
         }else{
             postDamageValue(arrayDamage[0].from);
         }
 
     }, [])
+
+    const reduceDuplicateValues = (props)=>{
+        const duplicateValues = {
+            double_damage : '4x',
+            half_damage : '1/4x',
+            no_damage : '0x'
+        }
+
+        Object.entries(props)
+            .reduce((acc,[keyName,value]) => {
+                const key = keyName;
+                console.log([keyName,value])
+                const verifiedValue = filterForUniqueValues(value,duplicateValues[key]);
+            })
+    }
+
+    const filterForUniqueValues = (valueForFiltering,damageValue) => {
+        console.log(valueForFiltering,damageValue);
+    }
+
+    const joinDamageRelations = (props) =>{
+        return{
+            to : joinObjects(props,'to'),
+            from : joinObjects(props,'from')
+        }
+    }
     
+    const joinObjects = (props,string) =>{
+        const key = string;
+        const firstArrayValue = props[0][key];
+        const secondArrayValue = props[1][key];
+
+        const result = Object.entries(secondArrayValue)
+            .reduce((acc,[keyName,value]) => {
+                const result = firstArrayValue[keyName].concat(value);
+                return(acc={[keyName]:result, ...acc})
+            },{});
+        return result;
+    }
+
     const postDamageValue = (props)=>{
         const result = Object.entries(props)
             .reduce((acc,[keyName,value]) =>{
@@ -32,6 +73,7 @@ const DamageRelations = ({damages}) => {
         },{});
 
         //console.log(result);
+        return result;
     }
 
     const separateObjectBetweenToAndFrom = (damage) =>{
