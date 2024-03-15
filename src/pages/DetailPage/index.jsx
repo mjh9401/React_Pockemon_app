@@ -9,6 +9,7 @@ import { Vector } from '../../assets/Vector';
 import { Balance } from '../../assets/Balance';
 import Type from '../../components/Type';
 import BaseStat from '../../components/BaseStat';
+import DemageRelations from '../../components/DamageRelations'
 
 const DetailPage = () => {
 
@@ -32,14 +33,13 @@ const DetailPage = () => {
       if(pokemonData){
         const{name, id, types, weight, height, stats, abilities} = pokemonData;
         const nextAndPreviousPokemon = await getNextAndPreviousPokemon(id);
-        
 
         // 자바스크립트 Promise 부분 찾아보기
         const DemageRelations = await Promise.all(
           types.map(async (i)=>{
-            console.log('i',i);
+            // console.log('i',i);
             const type = await axios.get(i.type.url);
-            console.log('type',type);
+            // console.log('type',type);
             return type.data.damage_relations;
           })
         )
@@ -120,7 +120,7 @@ const DetailPage = () => {
   const img = `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/${pokemon?.id}.png`;
   const bg = `bg-${pokemon?.types?.[0]}`;
   const text = `text-${pokemon?.types?.[0]}`;
-  console.log(pokemon.stats);
+  //console.log(pokemon.stats);
 
   return (
     <article className='flex items-center gap-1 flex-col w-full'>
@@ -223,12 +223,12 @@ const DetailPage = () => {
           {pokemon.DemageRelations && (
             <div className='w-10/12'> 
               <h2 className={`text-base text-center font-semibold ${text}`}>
-                데미지 관계
+                <DemageRelations
+                  damages={pokemon.DemageRelations}
+                />
               </h2>
-              데미지
             </div>
           )}
-
 
         </section>
 
