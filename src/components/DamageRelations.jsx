@@ -1,7 +1,10 @@
 import React from 'react'
+import { useState } from 'react';
 import { useEffect } from 'react';
 
 const DamageRelations = ({damages}) => {
+
+    const [damagePokemonForm, setDamagePokemonForm] = useState();
 
     useEffect(() => {
         const arrayDamage = damages.map((damage)=>
@@ -10,9 +13,10 @@ const DamageRelations = ({damages}) => {
         if(arrayDamage.length === 2){
             // 합치는 부분
             const obj = joinDamageRelations(arrayDamage);
-            reduceDuplicateValues(postDamageValue(obj.from));
+            setDamagePokemonForm(reduceDuplicateValues(postDamageValue(obj.from)));
+            
         }else{
-            postDamageValue(arrayDamage[0].from);
+            setDamagePokemonForm(postDamageValue(arrayDamage[0].from));
         }
 
     }, [])
@@ -24,16 +28,26 @@ const DamageRelations = ({damages}) => {
             no_damage : '0x'
         }
 
-        Object.entries(props)
+        return Object.entries(props)
             .reduce((acc,[keyName,value]) => {
                 const key = keyName;
-                console.log([keyName,value])
+                //console.log([keyName,value]);
                 const verifiedValue = filterForUniqueValues(value,duplicateValues[key]);
-            })
+
+                return (acc = {[keyName]:verifiedValue, ...acc});
+            },{})
     }
 
     const filterForUniqueValues = (valueForFiltering,damageValue) => {
-        console.log(valueForFiltering,damageValue);
+
+        return valueForFiltering.reduce((acc, currentValue) => {
+            const {name, url} = currentValue;
+            const filterAcc = acc.filter((a) => a.name !== name);
+
+            return filterAcc.length === acc.length 
+                ?(acc =[currentValue, ...acc]) 
+                : (acc=[{damageValue : damageValue, name, url}, ...filterAcc])
+        },[])
     }
 
     const joinDamageRelations = (props) =>{
@@ -62,7 +76,7 @@ const DamageRelations = ({damages}) => {
                 const key = keyName;
                 const valuesOfKeyName = {
                     double_damage: '2x',
-                    half_damage: '1/2',
+                    half_damage: '1/2x',
                     no_damage : '0x'
                 };
                 return (acc = {[keyName]:value.map(i => ({
