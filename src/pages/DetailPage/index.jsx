@@ -10,6 +10,7 @@ import { Balance } from '../../assets/Balance';
 import Type from '../../components/Type';
 import BaseStat from '../../components/BaseStat';
 import DemageRelations from '../../components/DamageRelations'
+import DamageModal from '../../components/DamageModal';
 
 const DetailPage = () => {
 
@@ -18,6 +19,7 @@ const DetailPage = () => {
   const baseUrl = `https://pokeapi.co/api/v2/pokemon/`;
   const [pokemon, setPokemon] = useState();
   const [isLoading, setIsLoading] = useState(true);
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
   useEffect(() => {
     fetchPokemonData();
@@ -156,11 +158,13 @@ const DetailPage = () => {
 
           <div className='relative h-auto max-w-[15.5rem] z-20 mt-6 -mb-16'>
             <img src={img}
-                width='100%'
-                height='auto'
-                loading='lazy'
-                alt={pokemon.name}
-                className={`object-contain h-full`}/>
+              width='100%'
+              height='auto'
+              loading='lazy'
+              alt={pokemon.name}
+              className={`object-contain h-full`}
+              onClick={()=>setIsModalOpen(true)}
+            />
           </div>
         </section>
 
@@ -220,7 +224,7 @@ const DetailPage = () => {
               </table>
           </div>
 
-          {pokemon.DemageRelations && (
+          {/* {pokemon.DemageRelations && (
             <div className='w-10/12'> 
               <h2 className={`text-base text-center font-semibold ${text}`}>
                 <DemageRelations
@@ -228,11 +232,15 @@ const DetailPage = () => {
                 />
               </h2>
             </div>
-          )}
+          )} */}
 
         </section>
-
       </div>
+      {isModalOpen && 
+          <DamageModal 
+            setIsModalOpen={setIsModalOpen}
+            damages={pokemon.DemageRelations}
+          />}  
     </article>
   )
 }
