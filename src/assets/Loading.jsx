@@ -1,5 +1,5 @@
 
-export const Loading = (CN) => (
+export const Loading = ({ className: CN = '' }) => (
    <svg
       version="1.1"
       id="loader-1"
