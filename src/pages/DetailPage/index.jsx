@@ -1,16 +1,15 @@
 import axios from 'axios';
 import React, { useEffect, useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
-import { Loading } from '../../assets/Loading';
-import { LessThan } from '../../assets/LessThan';
-import { GreaterThan } from '../../assets/GreaterThan';
 import { ArrowLeft } from '../../assets/ArrowLeft';
-import { Vector } from '../../assets/Vector';
 import { Balance } from '../../assets/Balance';
-import Type from '../../components/Type';
+import { GreaterThan } from '../../assets/GreaterThan';
+import { LessThan } from '../../assets/LessThan';
+import { Loading } from '../../assets/Loading';
+import { Vector } from '../../assets/Vector';
 import BaseStat from '../../components/BaseStat';
-import DemageRelations from '../../components/DamageRelations'
 import DamageModal from '../../components/DamageModal';
+import Type from '../../components/Type';
 
 const DetailPage = () => {
 
@@ -33,7 +32,7 @@ const DetailPage = () => {
       const {data:pokemonData} =await axios.get(url);
       
       if(pokemonData){
-        const{name, id, types, weight, height, stats, abilities} = pokemonData;
+        const{name, id, types, weight, height, stats, abilities, sprites} = pokemonData;
         const nextAndPreviousPokemon = await getNextAndPreviousPokemon(id);
 
         // 자바스크립트 Promise 부분 찾아보기
@@ -56,7 +55,9 @@ const DetailPage = () => {
           abilities : formatPokemonAbilities(abilities),
           stats : formatPokemonStats(stats),
           DemageRelations,
-          types: types.map(type =>type.type.name)
+          types: types.map(type =>type.type.name),
+          sprites : formatPokemonSprites(sprites),
+          description :await getPokemonDescription(id)
         }
         setPokemon(formattedPokemonData);
         setIsLoading(false);
@@ -68,6 +69,33 @@ const DetailPage = () => {
 
   }
 
+  const filterAndFormatDescription = (flavorText) => {
+    const koreanDescriptions = flavorText
+                                ?.filter((text)=>text.language.name === "ko")
+                                .map((text) => text.flavor_text.replace(/\r|\n|\f/g,' '));
+    return koreanDescriptions;
+  }
+
+  const getPokemonDescription = async (id) => {
+    const url = `https://pokeapi.co/api/v2/pokemon-species/${id}`;
+    const {data : pokemonSpecies} = await axios.get(url);
+    //console.log(pokemonSpecies);
+
+    const descriptions = filterAndFormatDescription(pokemonSpecies.flavor_text_entries);
+
+    return descriptions[Math.floor(Math.random() * descriptions.length)];
+  }
+  
+  const formatPokemonSprites = (sprites)=>{
+    const newSprites = {...sprites};
+    Object.keys(newSprites).forEach(key => {
+      if(typeof newSprites[key] !== 'string'){
+        delete newSprites[key];
+      }});
+    
+    return Object.values(newSprites);
+  }
+  
   const formatPokemonStats = ([
     statHP,
     statATK,
@@ -223,16 +251,23 @@ const DetailPage = () => {
                 </tbody>
               </table>
           </div>
+          
+          <h2 className={`text-base font-semibold ${text}`}>
+            설명
+          </h2>
+          <p className='text-md leading-4 font-sans text-zinc-200 max-w-[30rem] text-center'>
+            {pokemon.description}
+          </p>
 
-          {/* {pokemon.DemageRelations && (
-            <div className='w-10/12'> 
-              <h2 className={`text-base text-center font-semibold ${text}`}>
-                <DemageRelations
-                  damages={pokemon.DemageRelations}
-                />
-              </h2>
-            </div>
-          )} */}
+          <div className='flex my-8 flex-wrap justify-center'>
+            {pokemon.sprites.map((url,index)=>(
+              <img
+                src={url}
+                key={index}
+                alt='sprites'
+              />
+            ))}
+          </div>
 
         </section>
       </div>
