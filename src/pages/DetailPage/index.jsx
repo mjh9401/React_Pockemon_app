@@ -17,17 +17,18 @@ const DetailPage = () => {
   const pokemonId = params.id;
   const baseUrl = `https://pokeapi.co/api/v2/pokemon/`;
   const [pokemon, setPokemon] = useState();
-  const [isLoading, setIsLoading] = useState(true);
+  const [isLoading, setIsLoading] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   useEffect(() => {
-    fetchPokemonData();
-  }, [])
+    setIsLoading(true);
+    fetchPokemonData(pokemonId);
+  }, [pokemonId])
   
 
-  async function fetchPokemonData(){
-    const url = `${baseUrl}${pokemonId}`;
-
+  async function fetchPokemonData(id){
+    const url = `${baseUrl}${id}`;
+    console.log(id);
     try {
       const {data:pokemonData} =await axios.get(url);
       
@@ -157,14 +158,14 @@ const DetailPage = () => {
       <div className={`${bg} w-auto h-full flex flex-col z-0 items-center justify-end relative overflow-hidden`}>
         {pokemon.previous &&(
           <Link className='absolute top-[40%] -translate-y-1/2 z-50 left-1'
-            to={`/pokenom/${pokemon.previous}`}>
+            to={`/pokemon/${pokemon.previous}`}>
             <LessThan className='w-5 h-8 p-1'/>
           </Link>
         )}
         
         {pokemon.next &&(
           <Link className='absolute top-[40%] -translate-y-1/2 z-50 right-1'
-            to={`/pokenom/${pokemon.next}`}>
+            to={`/pokemon/${pokemon.next}`}>
             <GreaterThan className='w-5 h-8 p-1'/>
           </Link>
         )}
