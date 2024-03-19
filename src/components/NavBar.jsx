@@ -4,12 +4,15 @@ import { useLocation, useNavigate } from 'react-router';
 import styled from 'styled-components';
 import app from '../firebase';
 
+const inittialUserData = localStorage.getItem("userData") ? 
+    JSON.parse(localStorage.getItem("userData")) : {};
+
 const NavBar = () => {
     const auth = getAuth(app);
     const provider = new GoogleAuthProvider();
 
     const [show, setShow] = useState(false);
-    const [userData, setUserData] = useState({});
+    const [userData, setUserData] = useState(inittialUserData);
 
     // useLocation이 URL 정보를 가지고 있음
     const {pathname} = useLocation();
@@ -30,11 +33,12 @@ const NavBar = () => {
       }
     }, [pathname])
     
-    
+    // 로그인
     const handleAuth = () => {
         signInWithPopup(auth,provider)
         .then((result) =>{
             setUserData(result.user);
+            localStorage.setItem("userData",JSON.stringify(result.user));
         })
         .catch(error =>{
             console.error(error);
