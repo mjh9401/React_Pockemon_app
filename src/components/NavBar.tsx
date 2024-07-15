@@ -3,11 +3,9 @@ import React, { useEffect, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router';
 import styled from 'styled-components';
 import app from '../firebase';
+import storage from '../utils/storage'
 
-const useDataFromStorage = localStorage.getItem("userData")
-
-const inittialUserData = useDataFromStorage ? 
-    JSON.parse(useDataFromStorage) : null;
+const inittialUserData = storage.get<User>('userData');
 
 const NavBar = () => {
     const auth = getAuth(app);
@@ -40,7 +38,8 @@ const NavBar = () => {
         signInWithPopup(auth,provider)
         .then((result) =>{
             setUserData(result.user);
-            localStorage.setItem("userData",JSON.stringify(result.user));
+            storage.set('userData',result.user);
+            // localStorage.setItem("userData",JSON.stringify(result.user));
         })
         .catch(error =>{
             console.error(error);
@@ -67,6 +66,7 @@ const NavBar = () => {
     const handleLogout = () => {
         signOut(auth)
             .then(() => {
+                storage.remove('userData');
                 setUserData(null);
             })
             .catch(error => {
